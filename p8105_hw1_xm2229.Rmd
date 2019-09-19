@@ -10,22 +10,115 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+# Problem 1
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+Create a data frame comprised of:
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+* a random sample of size 8 from a standard Normal distribution
+* a logical vector indicating whether elements of the sample are greater than 0
+* a character vector of length 8
+* a factor vector of length 8, with 3 different factor “levels”
 
-```{r cars}
-summary(cars)
+```{r}
+
+## create data frame
+random_sample_1 = rnorm(8, mean = 0, sd = 1)
+logical_vector = random_sample_1 > 0
+character_vector = vector(mode = "character", length = 8)
+list = c("red", "green", "blue", "blue", "blue", "blue","blue", "blue")
+factor_vector = factor(list)
+result_1 = data.frame(cbind(random_sample_1,logical_vector,character_vector,factor_vector))
+
+## create mean of each variables
+mean(random_sample_1)
+mean(logical_vector)
+mean(character_vector)
+mean(factor_vector)
+
+# I used 'rnorm' to produce random sample from standard normal distribution, used logical symbol '>' to create a list of logical values, used "vector" with mode character to create charater vector, and used "factor" to create factor vector. After these steps, I used "data.frame" to produce a data frama comprised of the previsou variables.
+#Then I used "mean" function to get mean of each variable. It doesn't work for character vector or factor vector, and works for others. The reason is that character vector and factor vector are not numerica or logical, but others are.
+
 ```
 
-## Including Plots
 
-You can also embed plots, for example:
+```{r}
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+##change variables to numerical
+logical_vector = as.numeric(logical_vector)
+character_vector = as.numeric(character_vector)
+factor_vector = as.numeric(factor_vector)
+
+#Both logical vector and factor vector become numbers, but character vector turns into a list of NA value and the mean of NA values is NA.  This helps to explain. 
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+convert the logical vector to numeric, and multiply the random sample by the result
+convert the logical vector to a factor, and multiply the random sample by the result
+convert the logical vector to a factor and then convert the result to numeric, and multiply the random sample by the result
+
+```{r}
+logical_vector * random_sample_1
+factor(logical_vector) * random_sample_1
+as.numeric(factor(logical_vector)) * random_sample_1
+
+#when logical vector converts to a factor, it can't multiply the random sample because it's not meaningful.
+```
+
+Problem 2
+
+This problem focuses the use of inline R code, plotting, and the behavior of ggplot for variables of different types.
+
+Create a data frame comprised of:
+x: a random sample of size 500 from a standard Normal distribution
+y: a random sample of size 500 from a standard Normal distribution
+A logical vector indicating whether x + y > 1
+A numeric vector created by coercing the above logical vector
+A factor vector created by coercing the above logical vector
+
+Make a scatterplot of y vs x; color points using the logical variable (adding color = ... inside of aes in your ggplot code should help). Make a second and third scatterplot that color points using the numeric and factor variables, respectively, and comment on the color scales.
+
+Export your first scatterplot to your project directory using ggsave.
+
+```{r}
+
+## create data frame
+x = rnorm(500, mean = 0, sd = 1)
+y = rnorm(500, mean = 0, sd = 1)
+logical_vector_2 = x + y > 1
+numeric_vector_2 = as.numeric(logical_vector_2)
+factor_vector_2 = factor(logical_vector_2)
+data_frame_2 = data.frame(cbind(x, y, logical_vector_2, numeric_vector_2, factor_vector_2))
+
+nrow(data_frame_2)
+ncol(data_frame_2)
+mean(x)
+median(x)
+sd(x)
+sum(logical_vector_2)/length(logical_vector_2)
+
+#In this data frame,
+#size is 500: 5 columes and 500 rows
+#mean of X is 0.05303692
+#median of x is 0.005256968
+#standart deviation of x is 0.9847508
+#the proportion of cases for which x + y > 1 is 0.272
+
+
+## scatterplot of x and y
+library(ggplot2)
+
+ggplot(data = data_frame_2, aes(x = x, y = y, color=logical_vector_2)) + geom_point()
+ggsave("scatter_plot.pdf", height = 4, width = 6)
+
+ggplot(data = data_frame_2, aes(x = x, y = y, color=numeric_vector_2)) + geom_point()
+
+ggplot(data = data_frame_2, aes(x = x, y = y, color=factor_vector_2)) + geom_point()
+```
+
+
+
+
+
+
+
